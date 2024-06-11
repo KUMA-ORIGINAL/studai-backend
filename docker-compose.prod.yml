@@ -3,17 +3,17 @@ version: '3'
 services:
   application:
     build:
-      context: server
+      context: test-task
       dockerfile: Dockerfile.prod
     env_file:
       - .env.prod
-    container_name: makala_box
+    container_name: test-task
     restart: unless-stopped
-    command: gunicorn --reload server.wsgi -b 0.0.0.0:8000 --timeout 5
+    command: gunicorn --reload test_task.wsgi -b 0.0.0.0:8000 --timeout 5
     expose:
       - 8000
     volumes:
-      - ./server:/app/application
+      - ./test-task:/app/application
       - static_volume:/app/application/static
       - media_volume:/app/application/media
     depends_on:
