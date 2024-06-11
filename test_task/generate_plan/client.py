@@ -1,6 +1,5 @@
 import httpx
 from django.conf import settings
-from django.contrib.sites import requests
 from openai import OpenAI
 
 proxy = '152.26.229.86:9443'
