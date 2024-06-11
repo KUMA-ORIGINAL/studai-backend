@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  application:
+    build:
+      context: ./test_task
+    env_file:
+      - .env
+    container_name: test_task
+    restart: unless-stopped
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./test_task:/app/application
+    ports:
+      - '8000:8000'
+    depends_on:
+      - database
+
+  database:
+    image: postgres:16.2-alpine3.18
+    env_file: .env
+    restart: unless-stopped
+    ports:
+      - '5555:5432'
+    volumes:
+      - database-storage:/var/lib/postgresql/data
+
+volumes:
+  database-storage:
