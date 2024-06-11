@@ -9,7 +9,7 @@ services:
       - .env.prod
     container_name: test_task
     restart: unless-stopped
-    command: gunicorn --reload test_task.wsgi -b 0.0.0.0:8000 --timeout 5 --log-level debug
+    command: gunicorn --reload test_task.wsgi -b 0.0.0.0:8000 --timeout 30 --log-level debug
     expose:
       - 8000
     volumes:
