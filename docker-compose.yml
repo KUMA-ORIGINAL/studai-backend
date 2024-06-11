@@ -3,7 +3,7 @@ version: '3.9'
 services:
   application:
     build:
-      context: ./test_task
+      context: test_task
     env_file:
       - .env
     container_name: test_task

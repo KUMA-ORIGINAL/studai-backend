@@ -37,7 +37,7 @@ class Plan(models.Model):
     page_count = models.CharField(max_length=255, choices=PAGE_COUNTS)
     wishes = models.CharField(max_length=255)
 
-    cover_page_data = models.CharField(max_length=255)
+    cover_page_data = models.CharField(max_length=255, choices=COVER_PAGE)
     university = models.CharField(max_length=255, blank=True)
     author_name = models.CharField(max_length=255, blank=True)
     group_name = models.CharField(max_length=255, blank=True)
