@@ -2,7 +2,7 @@ import httpx
 from django.conf import settings
 from openai import OpenAI
 
-proxy = '152.26.229.86:9443'
+proxy = 'http://85.111.60.196:8080'
 
 OPENAI_API_KEY = settings.OPENAI_API_KEY
 
