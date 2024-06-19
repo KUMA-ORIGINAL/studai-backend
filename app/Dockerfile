@@ -26,7 +26,7 @@ COPY ./entrypoint.sh .
 RUN sed -i 's/\r$//g' /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-COPY config application
+COPY app application
 WORKDIR $PROJECT_DIR/application
 
 # run entrypoint.sh
