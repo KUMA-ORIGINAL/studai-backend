@@ -1,13 +1,14 @@
 from rest_framework import serializers
 
-from generate_plan.models import Plan
+from .models import Word
 
 
 class PlanWriteSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
-        model = Plan
+        model = Word
         fields = [
-            'language_of_talk',
             'work_type',
             'language_of_work',
             'work_theme',
@@ -18,11 +19,18 @@ class PlanWriteSerializer(serializers.ModelSerializer):
             'university',
             'author_name',
             'group_name',
-            'teacher_name'
+            'teacher_name',
+            'author',
         ]
 
 
 class PlanReadSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Plan
+        model = Word
         fields = '__all__'
+
+
+class WordReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Word
+        fields = ['work_theme', 'page_count_display', 'work_type_display', 'language_of_work_display']

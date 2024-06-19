@@ -1,12 +1,12 @@
-server/venv
+app/venv
 .idea
 
 **/__pycache__
 __pycache__/
-server/db.sqlite3
-**/server/media
-**/server/static/
-server/static
+app/db.sqlite3
+**/app/media
+**/app/static/
+app/static
 
 .env.dev
 .env.prod
@@ -129,11 +129,11 @@ ENV/
 env.bak/
 venv.bak/
 
-# Spyder project settings
+# Spyder project config
 .spyderproject
 .spyproject
 
-# Rope project settings
+# Rope project config
 .ropeproject
 
 # mkdocs documentation

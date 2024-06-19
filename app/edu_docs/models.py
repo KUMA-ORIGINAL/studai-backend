@@ -1,7 +1,9 @@
 from django.db import models
 
+from account.models import User
 
-class Plan(models.Model):
+
+class Word(models.Model):
     WORK_TYPES_RU = [
         ("1", "Реферат"),
         ("2", "Самостоятельная работа студента"),
@@ -29,7 +31,6 @@ class Plan(models.Model):
         ("3", "Пустой титульный лист"),
     ]
 
-    language_of_talk = models.CharField(max_length=255, choices=LANGUAGES)
     work_type = models.CharField(max_length=255, choices=WORK_TYPES_RU)
     language_of_work = models.CharField(max_length=255, choices=LANGUAGES)
     work_theme = models.CharField(max_length=255)
@@ -43,4 +44,30 @@ class Plan(models.Model):
     group_name = models.CharField(max_length=255, blank=True)
     teacher_name = models.CharField(max_length=255, blank=True)
 
-    chatbot_response = models.TextField()
+    subtopics = models.JSONField()
+    context = models.JSONField()
+
+    status = models.BooleanField(default=False)
+
+    file = models.FileField(upload_to='documents/')
+
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.work_theme
+
+    @property
+    def work_type_display(self):
+        return dict(self.WORK_TYPES_RU).get(self.work_type, self.work_type)
+
+    @property
+    def language_of_work_display(self):
+        return dict(self.LANGUAGES).get(self.language_of_work, self.language_of_work)
+
+    @property
+    def page_count_display(self):
+        return dict(self.PAGE_COUNTS).get(self.page_count, self.page_count)
+
+    @property
+    def cover_page_data_display(self):
+        return dict(self.COVER_PAGE).get(self.cover_page_data, self.cover_page_data)

@@ -3,14 +3,14 @@ version: '3.9'
 services:
   application:
     build:
-      context: test_task
+      context: app
     env_file:
       - .env
-    container_name: test_task
+    container_name: app
     restart: unless-stopped
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./test_task:/app/application
+      - ./app:/app/application
     ports:
       - '8000:8000'
     depends_on:

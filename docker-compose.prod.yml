@@ -3,17 +3,17 @@ version: '3'
 services:
   application:
     build:
-      context: test_task
+      context: app
       dockerfile: Dockerfile.prod
     env_file:
       - .env.prod
-    container_name: test_task
+    container_name: app
     restart: unless-stopped
-    command: gunicorn --reload test_task.wsgi -b 0.0.0.0:8000 --timeout 30 --log-level debug
+    command: gunicorn --reload app.wsgi -b 0.0.0.0:8000 --timeout 30 --log-level debug
     expose:
       - 8000
     volumes:
-      - ./test_task:/app/application
+      - ./app:/app/application
       - static_volume:/app/application/static
       - media_volume:/app/application/media
     depends_on:
