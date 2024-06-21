@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'corsheaders',
 
     'edu_docs.apps.EduDocsConfig',
-    'account.apps.AccountConfig'
+    'account.apps.AccountConfig',
+    'bot.apps.BotConfig'
 ]
 
 MIDDLEWARE = [
@@ -160,6 +161,8 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
+TELEGRAM_TOKEN = env("TELEGRAM_TOKEN")
+TG_ADMIN_CHAT_ID = env('TG_ADMIN_CHAT_ID')
 
 OPENAI_API_KEY = env('OPENAI_API_KEY')
 
