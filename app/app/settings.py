@@ -161,6 +161,8 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
+DOMAIN = 'localhost:3000'
+
 TELEGRAM_TOKEN = env("TELEGRAM_TOKEN")
 TG_ADMIN_CHAT_ID = env('TG_ADMIN_CHAT_ID')
 
@@ -224,3 +226,19 @@ SPECTACULAR_SETTINGS = {
     ],
 }
 
+LOGGING = {
+    'version': 1,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+    }
+}
