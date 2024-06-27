@@ -1,6 +1,7 @@
 from django.db import models
 
 from account.models import User
+from edu_docs.models import Word
 
 
 class Payment(models.Model):
@@ -8,11 +9,12 @@ class Payment(models.Model):
         PENDING = 'pending', 'Pending'
         APPROVED = 'approved', 'Approved'
         REJECTED = 'rejected', 'Rejected'
+        READY = 'ready', 'Ready'
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    tg_user_id = models.BigIntegerField()
-    tg_username = models.CharField(max_length=255, blank=True, null=True)
-    receipt_image_id = models.TextField()
+    word = models.OneToOneField(Word, on_delete=models.CASCADE, blank=True)
+
+    photo = models.ImageField(upload_to='payment_photos/%Y/%m/%d')
     status = models.CharField(
         max_length = 50,
         choices = StatusChoices.choices,

@@ -1,8 +1,9 @@
 import logging
 
+import telebot
 from django.core.management.base import BaseCommand
 
-from bot.views import bot
+from bot.views_bot import bot
 
 logging.basicConfig(level=logging.INFO)
 
@@ -13,9 +14,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Entrypoint."""
-        logging.info('Start long polling...')
         try:
-            bot.infinity_polling()
+            logging.info('Start long polling...')
+            bot.polling(none_stop=True)
         except Exception as e:
             logging.error(f'Ошибка при запуске бота: {e}')
 

@@ -13,10 +13,12 @@ import docx
 import os
 import re
 
+# import uno
+# from com.sun.star.beans import PropertyValue
 
 def save_doc_in_media(doc, sanitized_theme):
     # Путь до директории для сохранения
-    studai_work_path = settings.MEDIA_ROOT / 'Studai работы'
+    studai_work_path = settings.MEDIA_ROOT / 'studai_works'
 
     # Создаем директорию, если её нет
     if not os.path.exists(studai_work_path):
@@ -27,6 +29,39 @@ def save_doc_in_media(doc, sanitized_theme):
 
     # Сохраняем документ
     doc.save(file_path)
+
+    # # Устанавливаем соединение с LibreOffice
+    # local_context = uno.getComponentContext()
+    # resolver = local_context.ServiceManager.createInstanceWithContext(
+    #     "com.sun.star.bridge.UnoUrlResolver", local_context
+    # )
+    # context = resolver.resolve(
+    #     "uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext"
+    # )
+    # desktop = context.ServiceManager.createInstanceWithContext(
+    #     "com.sun.star.frame.Desktop", context
+    # )
+    #
+    # # Преобразуем путь к файлу в URL, понятный LibreOffice
+    # file_url = uno.systemPathToFileUrl(file_path)
+    #
+    # # Определяем свойства для открытия документа
+    # properties = PropertyValue()
+    # properties.Name = "Hidden"
+    # properties.Value = True
+    #
+    # # Открываем документ
+    # document = desktop.loadComponentFromURL(file_url, "_blank", 0, (properties,))
+    #
+    # # Обновляем оглавление
+    # if document:
+    #     indexes = document.getDocumentIndexes()
+    #     for index in range(indexes.getCount()):
+    #         indexes.getByIndex(index).update()
+    #
+    #     # Сохраняем документ
+    #     document.store()
+    #     document.close(True)
 
     return file_path
 
@@ -650,6 +685,7 @@ def create_word(work_theme, subtopics, texts, university, work_type, author_name
         doc.add_page_break()
 
         add_heading(doc, subtopics[10])
+
         bibliography = texts[8].split("\n")
         for i, reference in enumerate(bibliography, start=1):
             doc.add_paragraph(f"{i}. {reference.strip()}")

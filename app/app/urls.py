@@ -28,6 +28,7 @@ urlpatterns = [
          name='swagger-ui'),
 
     path('api/documents/', include('edu_docs.urls')),
+    path('api/payments/', include('bot.urls')),
     path('api/', include('account.urls'))
 ]
 

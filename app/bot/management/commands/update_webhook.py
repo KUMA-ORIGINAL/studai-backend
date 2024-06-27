@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from bot.views import tbot
+from bot.views_bot import tbot
 
 log = logger.bind(task="app")
 
