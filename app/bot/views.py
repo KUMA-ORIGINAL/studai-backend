@@ -3,7 +3,6 @@ from rest_framework import viewsets, generics, permissions, status
 from rest_framework.response import Response
 
 from bot.handlers.main_2 import send_receipt_to_admin
-from bot.handlers.main import bot
 from bot.models import Payment
 from bot.serializers import PaymentCreateSerializer
 

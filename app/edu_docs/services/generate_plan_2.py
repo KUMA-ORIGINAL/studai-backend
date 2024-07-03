@@ -6,14 +6,9 @@ def generate_plan(
         language_of_work,
         work_theme,
         discipline,
-        university,
         work_type,
-        author_name,
-        group_name,
-        teacher_name,
         page_count,
-        wishes,
-        cover_page_data):
+        wishes,):
     """
         Функция generateplan генерирует план работы через API OpenAI.
 
@@ -62,22 +57,6 @@ def generate_plan(
     }
 
     chatbot_response = ""
-
-    if cover_page_data == "1":  # Титульный лист добавить
-        # Попросим написать название университета
-        university = university
-        # Попросим написать ФИО исполнителя
-        author_name = author_name
-        # Попросим написать группы исполнителя
-        group_name = group_name
-        # Попросим написать ФИО преподавателя
-        teacher_name = teacher_name
-    # Добавить пустой титульный лист
-    elif cover_page_data == "3":
-        university = " "
-        author_name = "___________________________"
-        group_name = "___________________________"
-        teacher_name = "___________________________"
 
     # Попросим выбрать тип работы
     work_type = work_type

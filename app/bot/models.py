@@ -12,11 +12,11 @@ class Payment(models.Model):
         READY = 'ready', 'Ready'
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    word = models.OneToOneField(Word, on_delete=models.CASCADE, blank=True)
+    word = models.OneToOneField(Word, on_delete=models.CASCADE)
 
     photo = models.ImageField(upload_to='payment_photos/%Y/%m/%d')
     status = models.CharField(
-        max_length = 50,
+        max_length = 20,
         choices = StatusChoices.choices,
         default = StatusChoices.PENDING,
     )

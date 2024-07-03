@@ -1,69 +1,45 @@
-from django.conf import settings
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.section import WD_SECTION
-from docx.oxml import OxmlElement, ns
-from docx.shared import Pt, RGBColor
-from docx.enum.text import WD_BREAK
-from docx.shared import Pt, Inches
-from docx.oxml.ns import qn
-from docx import Document
-import datetime
-import docx
 import os
 import re
+import uuid
+import lxml
 
-# import uno
-# from com.sun.star.beans import PropertyValue
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+
+from docx import Document
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_ALIGN_PARAGRAPH, WD_BREAK
+from docx.enum.section import WD_SECTION
+from docx.oxml import OxmlElement, ns
+from docx.shared import Pt, RGBColor, Inches
+from docx.oxml.ns import qn
+import datetime
+import docx
+
 
 def save_doc_in_media(doc, sanitized_theme):
-    # Путь до директории для сохранения
     studai_work_path = settings.MEDIA_ROOT / 'studai_works'
+    try:
+        os.makedirs(studai_work_path, exist_ok=True)
 
-    # Создаем директорию, если её нет
-    if not os.path.exists(studai_work_path):
-        os.makedirs(studai_work_path)
+        unique_filename = f"{sanitized_theme}_{uuid.uuid4().hex}.docx"
+        file_path = os.path.join(studai_work_path, unique_filename)
 
-    # Полный путь до файла
-    file_path = os.path.join(studai_work_path, sanitized_theme + ".docx")
+        namespace = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+        element_updatefields = lxml.etree.SubElement(
+            doc.settings.element, f"{namespace}updateFields"
+        )
+        element_updatefields.set(f"{namespace}val", "true")
 
-    # Сохраняем документ
-    doc.save(file_path)
+        doc.save(file_path)
 
-    # # Устанавливаем соединение с LibreOffice
-    # local_context = uno.getComponentContext()
-    # resolver = local_context.ServiceManager.createInstanceWithContext(
-    #     "com.sun.star.bridge.UnoUrlResolver", local_context
-    # )
-    # context = resolver.resolve(
-    #     "uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext"
-    # )
-    # desktop = context.ServiceManager.createInstanceWithContext(
-    #     "com.sun.star.frame.Desktop", context
-    # )
-    #
-    # # Преобразуем путь к файлу в URL, понятный LibreOffice
-    # file_url = uno.systemPathToFileUrl(file_path)
-    #
-    # # Определяем свойства для открытия документа
-    # properties = PropertyValue()
-    # properties.Name = "Hidden"
-    # properties.Value = True
-    #
-    # # Открываем документ
-    # document = desktop.loadComponentFromURL(file_url, "_blank", 0, (properties,))
-    #
-    # # Обновляем оглавление
-    # if document:
-    #     indexes = document.getDocumentIndexes()
-    #     for index in range(indexes.getCount()):
-    #         indexes.getByIndex(index).update()
-    #
-    #     # Сохраняем документ
-    #     document.store()
-    #     document.close(True)
+        return file_path
 
-    return file_path
+    except OSError as e:
+        # Обработка ошибок создания директории или сохранения файла
+        raise ImproperlyConfigured(f"Failed to save document: {e}")
+    except Exception as e:
+        # Обработка других исключений
+        raise Exception(f"An unexpected error occurred: {e}")
 
 
 def sanitize_filename(filename):

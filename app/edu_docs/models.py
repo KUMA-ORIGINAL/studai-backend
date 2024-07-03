@@ -4,6 +4,12 @@ from account.models import User
 
 
 class Word(models.Model):
+    class StatusChoices(models.TextChoices):
+        PENDING = 'pending', 'Pending'
+        APPROVED = 'approved', 'Approved'
+        REJECTED = 'rejected', 'Rejected'
+        READY = 'ready', 'Ready'
+
     WORK_TYPES_RU = [
         ("1", "Реферат"),
         ("2", "Самостоятельная работа студента"),
@@ -39,15 +45,18 @@ class Word(models.Model):
     wishes = models.CharField(max_length=255)
 
     cover_page_data = models.CharField(max_length=255, choices=COVER_PAGE)
-    university = models.CharField(max_length=255, blank=True)
-    author_name = models.CharField(max_length=255, blank=True)
-    group_name = models.CharField(max_length=255, blank=True)
-    teacher_name = models.CharField(max_length=255, blank=True)
+    university = models.CharField(max_length=255, blank=True, null=True)
+    author_name = models.CharField(max_length=255, blank=True, null=True)
+    group_name = models.CharField(max_length=255, blank=True, null=True)
+    teacher_name = models.CharField(max_length=255, blank=True, null=True)
 
     subtopics = models.JSONField()
     context = models.JSONField()
 
-    status = models.BooleanField(default=False)
+    status = models.CharField(
+        max_length=20,
+        choices=StatusChoices.choices,
+        default=StatusChoices.PENDING)
 
     file = models.FileField(upload_to='documents/')
 

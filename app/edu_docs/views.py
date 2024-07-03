@@ -44,27 +44,30 @@ class PlanViewSet(viewsets.GenericViewSet):
             language_of_work = data['language_of_work']
             work_theme = data['work_theme']
             discipline = data['discipline']
-            university = data.get('university', ''),
-            author_name = data.get('author_name', ''),
-            group_name = data.get('group_name', ''),
-            teacher_name = data.get('teacher_name', '')
             page_count = data['page_count']
             wishes = data['wishes']
+
             cover_page_data = data['cover_page_data']
+
+            if cover_page_data == "3":
+                university = " "
+                author_name = "___________________________"
+                group_name = "___________________________"
+                teacher_name = "___________________________"
+            else:
+                university = data.get('university', '')
+                author_name = data.get('author_name', '')
+                group_name = data.get('group_name', '')
+                teacher_name = data.get('teacher_name', '')
 
             subtopics, context = self.generate_plan_and_subtopics(
                 client=client,
                 language_of_work=language_of_work,
                 work_theme=work_theme,
                 discipline=discipline,
-                university=university,
                 work_type=work_type,
-                author_name=author_name,
-                group_name=group_name,
-                teacher_name=teacher_name,
                 page_count=page_count,
                 wishes=wishes,
-                cover_page_data=cover_page_data
             )
 
             plan = Word.objects.create(
@@ -103,14 +106,9 @@ class PlanViewSet(viewsets.GenericViewSet):
             language_of_work=plan.language_of_work,
             work_theme=plan.work_theme,
             discipline=plan.discipline,
-            university=plan.university,
             work_type=plan.work_type,
-            author_name=plan.author_name,
-            group_name=plan.group_name,
-            teacher_name=plan.teacher_name,
             page_count=plan.page_count,
             wishes=plan.wishes,
-            cover_page_data=plan.cover_page_data
         )
 
         plan.subtopics = subtopics
@@ -121,44 +119,44 @@ class PlanViewSet(viewsets.GenericViewSet):
         return Response(serializer.data)
 
 
-    @action(detail=True, methods=['post'])
-    def approve(self, request, pk=None):
-        try:
-            plan = Word.objects.get(pk=pk)
-        except Word.DoesNotExist:
-            return Response(status=status_code.HTTP_404_NOT_FOUND)
-
-        subtopic_texts, context = generate_texts(
-            client=client,
-            language_of_work=plan.language_of_work,
-            subtopics=plan.subtopics,
-            context=plan.context,
-            page_count=plan.page_count
-        )
-        edited_subtopic_texts = texts_editor(
-            subtopic_texts,
-            plan.subtopics
-        )
-        file_path = create_word(
-            work_theme=plan.work_theme,
-            subtopics=plan.subtopics,
-            texts=edited_subtopic_texts,
-            university=plan.university,
-            work_type=plan.work_type,
-            author_name=plan.author_name,
-            group_name=plan.group_name,
-            teacher_name=plan.teacher_name,
-            language_of_work=plan.language_of_work,
-            cover_page_data=plan.cover_page_data
-        )
-
-        plan.status = True
-        plan.file = file_path
-        plan.save()
-
-        serializer = PlanReadSerializer(plan)
-
-        return Response(serializer.data)
+    # @action(detail=True, methods=['post'])
+    # def approve(self, request, pk=None):
+    #     try:
+    #         plan = Word.objects.get(pk=pk)
+    #     except Word.DoesNotExist:
+    #         return Response(status=status_code.HTTP_404_NOT_FOUND)
+    #
+    #     subtopic_texts, context = generate_texts(
+    #         client=client,
+    #         language_of_work=plan.language_of_work,
+    #         subtopics=plan.subtopics,
+    #         context=plan.context,
+    #         page_count=plan.page_count
+    #     )
+    #     edited_subtopic_texts = texts_editor(
+    #         subtopic_texts,
+    #         plan.subtopics
+    #     )
+    #     file_path = create_word(
+    #         work_theme=plan.work_theme,
+    #         subtopics=plan.subtopics,
+    #         texts=edited_subtopic_texts,
+    #         university=plan.university,
+    #         work_type=plan.work_type,
+    #         author_name=plan.author_name,
+    #         group_name=plan.group_name,
+    #         teacher_name=plan.teacher_name,
+    #         language_of_work=plan.language_of_work,
+    #         cover_page_data=plan.cover_page_data
+    #     )
+    #
+    #     plan.status = True
+    #     plan.file = file_path
+    #     plan.save()
+    #
+    #     serializer = PlanReadSerializer(plan)
+    #
+    #     return Response(serializer.data)
 
     @staticmethod
     def generate_plan_and_subtopics(*args, **kwargs):
@@ -181,5 +179,5 @@ class WordViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         user = self.request.user
-        return Word.objects.filter(author=user, status=True)
+        return Word.objects.filter(author=user, status=Word.StatusChoices.APPROVED)
 
