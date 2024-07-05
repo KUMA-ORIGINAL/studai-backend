@@ -40,9 +40,9 @@ class Word(models.Model):
     work_type = models.CharField(max_length=255, choices=WORK_TYPES_RU)
     language_of_work = models.CharField(max_length=255, choices=LANGUAGES)
     work_theme = models.CharField(max_length=255)
-    discipline = models.CharField(max_length=255, blank=True)
+    discipline = models.CharField(max_length=255)
     page_count = models.CharField(max_length=255, choices=PAGE_COUNTS)
-    wishes = models.CharField(max_length=255)
+    wishes = models.CharField(max_length=255, blank=True)
 
     cover_page_data = models.CharField(max_length=255, choices=COVER_PAGE)
     university = models.CharField(max_length=255, blank=True, null=True)
