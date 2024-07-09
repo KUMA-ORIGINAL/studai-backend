@@ -240,10 +240,10 @@ DJOSER = {
         'user': 'account.serializers.UserSerializer',
         'current_user': 'account.serializers.UserSerializer',
     },
-    # 'EMAIL': {
-    #     'activation': 'account.email.ActivationEmail',
-    #     'confirmation': 'account.email.ConfirmationEmail',
-    # },
+    'EMAIL': {
+        'activation': 'account.email.ActivationEmail',
+        'confirmation': 'account.email.ConfirmationEmail',
+    },
 }
 
 SPECTACULAR_SETTINGS = {
