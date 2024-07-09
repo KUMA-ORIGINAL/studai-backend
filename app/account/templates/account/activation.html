@@ -1,0 +1,89 @@
+{% load i18n %}
+
+{% block subject %}
+    Активация аккаунта на {{ site_name }}
+{% endblock subject %}
+
+{% block html_body %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подтверждение электронной почты</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .email-container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px;
+            padding: 40px;
+            text-align: center;
+            border-top: 8px solid #007bff;
+        }
+        .email-header {
+            font-size: 28px;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        .email-body {
+            font-size: 18px;
+            color: #555555;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .email-button {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 18px;
+            color: white;
+            background-color: #007bff;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .email-button:hover {
+            background-color: #0056b3;
+        }
+        .email-footer {
+            font-size: 14px;
+            color: #777;
+            margin-top: 30px;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 20px;
+            max-width: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <img src="https://yourwebsite.com/logo.png" alt="Studai Logo" class="logo">
+        <div class="email-header">Подтвердите ваш email</div>
+        <div class="email-body">
+            Привет, {{ user.full_name }},<br><br>
+            Спасибо, что зарегистрировались на Studai! Пожалуйста, подтвердите ваш адрес электронной почты, нажав на кнопку ниже:
+        </div>
+        <a href="https://{{ domain }}/{{ url|safe }}" class="email-button">Подтвердить Email</a>
+        <div class="email-footer">
+            Если вы не запрашивали подтверждение, просто проигнорируйте это письмо. Ваши данные останутся без изменений.<br><br>
+            С наилучшими пожеланиями,<br>Команда Studai
+        </div>
+    </div>
+</body>
+</html>
+
+{% endblock html_body %}
