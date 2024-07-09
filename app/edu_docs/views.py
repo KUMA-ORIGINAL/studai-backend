@@ -6,13 +6,11 @@ from rest_framework.response import Response
 from .models import Word
 from .permissions import IsAuthorOrReadOnly
 from .services.client import client
-from .services.create_word_2 import create_word
 from .services.find_subtopics import find_subtopics
 from .services.generate_plan_2 import generate_plan
 from .serializers import PlanWriteSerializer, PlanReadSerializer, WordReadSerializer
-from .services.generate_texts_2 import generate_texts
-from .services.texts_editor import texts_editor
 
+MAX_SUBTOPICS = 11
 
 @extend_schema(tags=['Plans'])
 @extend_schema_view(
@@ -70,29 +68,35 @@ class PlanViewSet(viewsets.GenericViewSet):
                 wishes=wishes,
             )
 
-            plan = Word.objects.create(
-                work_type=work_type,
-                language_of_work=language_of_work,
-                work_theme=work_theme,
-                discipline=discipline,
-                page_count=page_count,
-                wishes=wishes,
+            if len(subtopics) == MAX_SUBTOPICS:
+                plan = Word.objects.create(
+                    work_type=work_type,
+                    language_of_work=language_of_work,
+                    work_theme=work_theme,
+                    discipline=discipline,
+                    page_count=page_count,
+                    wishes=wishes,
 
-                cover_page_data=cover_page_data,
-                university=university,
-                author_name=author_name,
-                group_name=group_name,
-                teacher_name=teacher_name,
+                    cover_page_data=cover_page_data,
+                    university=university,
+                    author_name=author_name,
+                    group_name=group_name,
+                    teacher_name=teacher_name,
 
-                subtopics=subtopics,
-                context=context,
+                    subtopics=subtopics,
+                    context=context,
 
-                author=self.request.user
-            )
+                    author=self.request.user
+                )
 
-            response_serializer = PlanReadSerializer(plan)
-            return Response(response_serializer.data, status=status_code.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status_code.HTTP_400_BAD_REQUEST)
+                response_serializer = PlanReadSerializer(plan)
+                return Response(response_serializer.data,
+                                status=status_code.HTTP_201_CREATED)
+            else:
+                return Response({"error": "Subtopic generation failed"},
+                                status=status_code.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors,
+                        status=status_code.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['post'])
     def rebuild(self, request, pk=None):
@@ -111,52 +115,16 @@ class PlanViewSet(viewsets.GenericViewSet):
             wishes=plan.wishes,
         )
 
-        plan.subtopics = subtopics
-        plan.context = context
-        plan.save()
+        if len(subtopics) == MAX_SUBTOPICS:
+            plan.subtopics = subtopics
+            plan.context = context
+            plan.save()
 
-        serializer = PlanReadSerializer(plan)
-        return Response(serializer.data)
-
-
-    # @action(detail=True, methods=['post'])
-    # def approve(self, request, pk=None):
-    #     try:
-    #         plan = Word.objects.get(pk=pk)
-    #     except Word.DoesNotExist:
-    #         return Response(status=status_code.HTTP_404_NOT_FOUND)
-    #
-    #     subtopic_texts, context = generate_texts(
-    #         client=client,
-    #         language_of_work=plan.language_of_work,
-    #         subtopics=plan.subtopics,
-    #         context=plan.context,
-    #         page_count=plan.page_count
-    #     )
-    #     edited_subtopic_texts = texts_editor(
-    #         subtopic_texts,
-    #         plan.subtopics
-    #     )
-    #     file_path = create_word(
-    #         work_theme=plan.work_theme,
-    #         subtopics=plan.subtopics,
-    #         texts=edited_subtopic_texts,
-    #         university=plan.university,
-    #         work_type=plan.work_type,
-    #         author_name=plan.author_name,
-    #         group_name=plan.group_name,
-    #         teacher_name=plan.teacher_name,
-    #         language_of_work=plan.language_of_work,
-    #         cover_page_data=plan.cover_page_data
-    #     )
-    #
-    #     plan.status = True
-    #     plan.file = file_path
-    #     plan.save()
-    #
-    #     serializer = PlanReadSerializer(plan)
-    #
-    #     return Response(serializer.data)
+            serializer = PlanReadSerializer(plan)
+            return Response(serializer.data)
+        else:
+            return Response({"error": "Subtopic generation failed"},
+                            status=status_code.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def generate_plan_and_subtopics(*args, **kwargs):

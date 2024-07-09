@@ -58,7 +58,7 @@ class Word(models.Model):
         choices=StatusChoices.choices,
         default=StatusChoices.PENDING)
 
-    file = models.FileField(upload_to='documents/')
+    file = models.FileField(upload_to='documents/%Y/%m/%d/')
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 

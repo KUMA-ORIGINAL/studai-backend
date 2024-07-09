@@ -12,7 +12,10 @@ from edu_docs.services.create_word_2 import create_word
 from edu_docs.services.generate_texts_2 import generate_texts
 from edu_docs.services.texts_editor import texts_editor
 
-logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+telebot_logger = logging.getLogger('telebot')
+telebot_logger.setLevel(logging.DEBUG)
 
 bot = TeleBot(settings.TELEGRAM_TOKEN)
 
@@ -28,20 +31,20 @@ def send_receipt_to_admin(payment):
     logging.info(f'Attempting to send receipt for payment id: {payment.id}')
     try:
         photo_path = payment.photo.path
-        logging.info(f'Photo path: {photo_path}')
+        logger.info(f'Photo path: {photo_path}')
 
         with open(photo_path, 'rb') as photo:
             caption = (f"Имя клиента: {payment.author.full_name}\n"
                        f"Название заказа: {payment.word.work_theme}\n"
                        f"Номер заказа: {payment.id}")
-            logging.info(f'Caption: {caption}')
+            logger.info(f'Caption: {caption}')
 
             bot.send_photo(admin_chat_id, photo, caption=caption)
-            logging.info(f'Receipt sent to admin with buttons for payment id: {payment.id}')
+            logger.info(f'Receipt sent to admin with buttons for payment id: {payment.id}')
     except FileNotFoundError:
-        logging.error(f'Photo file not found at path: {photo_path}')
+        logger.error(f'Photo file not found at path: {photo_path}')
     except Exception as e:
-        logging.error(f'Error sending receipt: {e}')
+        logger.error(f'Error sending receipt: {e}')
 
 @bot.message_handler(commands=['approve'])
 def approve_handler(message):
@@ -183,13 +186,13 @@ def reject_handler(message):
 
 
 # Logging updates
-@bot.message_handler(func=lambda message: True)
-def echo_all(message):
-    logging.info(f'Received message: {message.text}')
+# @bot.message_handler(func=lambda message: True)
+# def echo_all(message):
+#     logger.info(f'Received message: {message.text}')
 
 
 def run_polling():
-    print('start')
+    logger.info(f'start bot')
     while True:
         try:
             bot.polling(non_stop=True, interval=0)

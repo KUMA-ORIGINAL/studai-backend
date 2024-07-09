@@ -260,17 +260,37 @@ SPECTACULAR_SETTINGS = {
 
 LOGGING = {
     'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
         },
     },
     'loggers': {
         'django.db.backends': {
+            'handlers': ['console'],
             'level': 'DEBUG',
+            'propagate': False,
+        },
+        'telebot': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # Ensure telebot logs are captured
+            'propagate': True,
         },
     },
     'root': {
         'handlers': ['console'],
+        'level': 'DEBUG',
     }
 }
