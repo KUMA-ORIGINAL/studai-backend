@@ -15,14 +15,20 @@ from docx.oxml.ns import qn
 import datetime
 import docx
 
+def get_dated_path(filename):
+    today = datetime.datetime.now()
+    return os.path.join('documents', today.strftime('%Y'), today.strftime('%m'), today.strftime('%d'), filename)
+
 
 def save_doc_in_media(doc, sanitized_theme):
-    studai_work_path = settings.MEDIA_ROOT / 'studai_works'
     try:
-        os.makedirs(studai_work_path, exist_ok=True)
-
+        # Создание пути с текущей датой
         unique_filename = f"{sanitized_theme}_{uuid.uuid4().hex}.docx"
-        file_path = os.path.join(studai_work_path, unique_filename)
+        dated_path = get_dated_path(unique_filename)
+        full_path = os.path.join(settings.MEDIA_ROOT, dated_path)
+
+        # Создание всех необходимых директорий
+        os.makedirs(os.path.dirname(full_path), exist_ok=True)
 
         namespace = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
         element_updatefields = lxml.etree.SubElement(
@@ -30,9 +36,8 @@ def save_doc_in_media(doc, sanitized_theme):
         )
         element_updatefields.set(f"{namespace}val", "true")
 
-        doc.save(file_path)
-
-        return file_path
+        doc.save(full_path)
+        return dated_path  # Возвращаем относительный путь
 
     except OSError as e:
         # Обработка ошибок создания директории или сохранения файла
