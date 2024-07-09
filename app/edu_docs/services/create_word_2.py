@@ -37,7 +37,7 @@ def save_doc_in_media(doc, sanitized_theme):
         element_updatefields.set(f"{namespace}val", "true")
 
         doc.save(full_path)
-        return dated_path  # Возвращаем относительный путь
+        return full_path, unique_filename  # Возвращаем относительный путь
 
     except OSError as e:
         # Обработка ошибок создания директории или сохранения файла

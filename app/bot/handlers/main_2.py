@@ -1,6 +1,7 @@
 import logging
 import time
 
+from django.core.files import File
 from django.core.files.base import ContentFile
 from telebot import TeleBot
 
@@ -98,7 +99,7 @@ def approve_handler(message):
         subtopic_texts,
         word.subtopics
     )
-    file_path = create_word(
+    full_path, unique_filename = create_word(
         work_theme=word.work_theme,
         subtopics=word.subtopics,
         texts=edited_subtopic_texts,
@@ -111,9 +112,11 @@ def approve_handler(message):
         cover_page_data=word.cover_page_data
     )
 
-    with open(file_path, 'rb') as f:
+    with open(full_path, 'rb') as f:
         file_content = f.read()
-        word.file.save(file_path, ContentFile(file_content))
+
+        # Сохраняем содержимое файла в поле FileField модели
+        word.file.save(unique_filename, ContentFile(file_content))
         word.status = word.StatusChoices.APPROVED
         word.save()
 
