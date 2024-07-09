@@ -27,7 +27,7 @@ services:
     volumes:
       - ./app:/app/application
     env_file:
-      - .env
+      - .env.prod
     depends_on:
       - application
 
