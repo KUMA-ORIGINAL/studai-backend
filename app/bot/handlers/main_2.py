@@ -111,7 +111,7 @@ def approve_handler(message):
     )
 
     word.status = word.StatusChoices.APPROVED
-    word.file = file_path
+    word.file.save(file_path)
     word.save()
 
     bot.send_message(admin_chat_id, f'Работа пользователя {payment.author.full_name} создан')
