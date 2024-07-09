@@ -1,6 +1,7 @@
 import logging
 import time
 
+from django.core.files.base import ContentFile
 from telebot import TeleBot
 
 from django.conf import settings
@@ -110,9 +111,11 @@ def approve_handler(message):
         cover_page_data=word.cover_page_data
     )
 
-    word.status = word.StatusChoices.APPROVED
-    word.file.save(file_path)
-    word.save()
+    with open(file_path, 'rb') as f:
+        file_content = f.read()
+        word.file.save(file_path, ContentFile(file_content))
+        word.status = word.StatusChoices.APPROVED
+        word.save()
 
     bot.send_message(admin_chat_id, f'Работа пользователя {payment.author.full_name} создан')
 
