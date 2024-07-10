@@ -90,38 +90,44 @@ def approve_handler(message):
 
 
     word = payment.word
+    #
+    # subtopic_texts, context = generate_texts(
+    #     client=client,
+    #     language_of_work=word.language_of_work,
+    #     subtopics=word.subtopics,
+    #     context=word.context,
+    #     page_count=word.page_count
+    # )
+    # edited_subtopic_texts = texts_editor(
+    #     subtopic_texts,
+    #     word.subtopics
+    # )
+    # full_path, sanitized_theme = create_word(
+    #     work_theme=word.work_theme,
+    #     subtopics=word.subtopics,
+    #     texts=edited_subtopic_texts,
+    #     university=word.university,
+    #     work_type=word.work_type_display,
+    #     author_name=word.author_name,
+    #     group_name=word.group_name,
+    #     teacher_name=word.teacher_name,
+    #     language_of_work=word.language_of_work,
+    #     cover_page_data=word.cover_page_data
+    # )
+    #
+    # with open(full_path, 'rb') as f:
+    #     file_content = f.read()
+    #
+    #     # Сохраняем содержимое файла в поле FileField модели
+    #     word.file.save(sanitized_theme, ContentFile(file_content))
+    #     word.status = word.StatusChoices.APPROVED
+    #     word.save()
 
-    subtopic_texts, context = generate_texts(
-        client=client,
-        language_of_work=word.language_of_work,
-        subtopics=word.subtopics,
-        context=word.context,
-        page_count=word.page_count
-    )
-    edited_subtopic_texts = texts_editor(
-        subtopic_texts,
-        word.subtopics
-    )
-    full_path, sanitized_theme = create_word(
-        work_theme=word.work_theme,
-        subtopics=word.subtopics,
-        texts=edited_subtopic_texts,
-        university=word.university,
-        work_type=word.work_type_display,
-        author_name=word.author_name,
-        group_name=word.group_name,
-        teacher_name=word.teacher_name,
-        language_of_work=word.language_of_work,
-        cover_page_data=word.cover_page_data
-    )
+    file_content = 'fsdsdfs'
+    word.file.save('история франции.docx', ContentFile(file_content))
+    word.status = word.StatusChoices.APPROVED
+    word.save()
 
-    with open(full_path, 'rb') as f:
-        file_content = f.read()
-
-        # Сохраняем содержимое файла в поле FileField модели
-        word.file.save(sanitized_theme, ContentFile(file_content))
-        word.status = word.StatusChoices.APPROVED
-        word.save()
 
     bot.send_message(admin_chat_id, f'Работа пользователя {payment.author.full_name} создан')
 
