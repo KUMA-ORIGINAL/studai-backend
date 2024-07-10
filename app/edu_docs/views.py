@@ -147,5 +147,5 @@ class WordViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         user = self.request.user
-        return Word.objects.filter(author=user, status=Word.StatusChoices.APPROVED)
+        return Word.objects.filter(author=user)
 
