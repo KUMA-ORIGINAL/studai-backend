@@ -22,9 +22,9 @@ def get_dated_path(filename):
 
 def save_doc_in_media(doc, sanitized_theme):
     try:
+        sanitized_theme = f'{sanitized_theme}.docx'
         # Создание пути с текущей датой
-        unique_filename = f"{sanitized_theme}_{uuid.uuid4().hex}.docx"
-        dated_path = get_dated_path(unique_filename)
+        dated_path = get_dated_path(sanitized_theme)
         full_path = os.path.join(settings.MEDIA_ROOT, dated_path)
 
         # Создание всех необходимых директорий
@@ -37,7 +37,7 @@ def save_doc_in_media(doc, sanitized_theme):
         element_updatefields.set(f"{namespace}val", "true")
 
         doc.save(full_path)
-        return full_path, unique_filename  # Возвращаем относительный путь
+        return full_path, sanitized_theme  # Возвращаем относительный путь
 
     except OSError as e:
         # Обработка ошибок создания директории или сохранения файла

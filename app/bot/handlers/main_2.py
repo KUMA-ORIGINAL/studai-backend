@@ -99,7 +99,7 @@ def approve_handler(message):
         subtopic_texts,
         word.subtopics
     )
-    full_path, unique_filename = create_word(
+    full_path, sanitized_theme = create_word(
         work_theme=word.work_theme,
         subtopics=word.subtopics,
         texts=edited_subtopic_texts,
@@ -116,7 +116,7 @@ def approve_handler(message):
         file_content = f.read()
 
         # Сохраняем содержимое файла в поле FileField модели
-        word.file.save(unique_filename, ContentFile(file_content))
+        word.file.save(sanitized_theme, ContentFile(file_content))
         word.status = word.StatusChoices.APPROVED
         word.save()
 
