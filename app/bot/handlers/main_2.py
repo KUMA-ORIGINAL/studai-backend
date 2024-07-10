@@ -38,6 +38,9 @@ def send_receipt_to_admin(payment):
         with open(photo_path, 'rb') as photo:
             caption = (f"Имя клиента: {payment.author.full_name}\n"
                        f"Название заказа: {payment.word.work_theme}\n"
+                       f"Тип работы: {payment.word.work_type_display}\n"
+                       f"Количество страниц: {payment.word.page_count_display}\n"
+                       f"Цена: {payment.price}\n"
                        f"Номер заказа: {payment.id}")
             logger.info(f'Caption: {caption}')
 
