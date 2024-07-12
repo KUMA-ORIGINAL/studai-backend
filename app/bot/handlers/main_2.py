@@ -1,7 +1,7 @@
 import logging
 import time
 
-from django.core.files.base import ContentFile
+from django.core.files.base import ContentFile, File
 from telebot import TeleBot
 from django.conf import settings
 
@@ -108,8 +108,7 @@ def approve_handler(message):
         subtopic_texts,
         word.subtopics
     )
-    create_word(
-        word=word,
+    full_path, sanitized_theme = create_word(
         work_theme=word.work_theme,
         subtopics=word.subtopics,
         texts=edited_subtopic_texts,
@@ -122,8 +121,10 @@ def approve_handler(message):
         cover_page_data=word.cover_page_data
     )
 
-    word.status = word.StatusChoices.APPROVED
-    word.save()
+    with open(full_path) as f:
+        word.file.save(sanitized_theme, File(f))
+        word.status = word.StatusChoices.APPROVED
+        word.save()
 
     for admin_chat_id in admin_chat_ids:
         bot.send_message(admin_chat_id, f'Работа пользователя {payment.author.full_name} создан')

@@ -5,7 +5,6 @@ import lxml
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.core.files import File
 
 from docx import Document
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_ALIGN_PARAGRAPH, WD_BREAK
@@ -39,9 +38,7 @@ def save_doc_in_media(doc, sanitized_theme, word):
 
         doc.save(full_path)
 
-        with open(full_path) as f:
-            word.file.save(sanitized_theme, File(f))
-            word.save()
+        return full_path, sanitized_theme  # Возвращаем относительный путь
 
     except OSError as e:
         # Обработка ошибок создания директории или сохранения файла
