@@ -40,7 +40,7 @@ def save_doc_in_media(doc, sanitized_theme):
 
         doc.save(full_path)
 
-        return full_path, sanitized_theme  # Возвращаем относительный путь
+        return dated_path, sanitized_theme  # Возвращаем относительный путь
 
     except OSError as e:
         # Обработка ошибок создания директории или сохранения файла

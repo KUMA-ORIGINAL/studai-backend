@@ -126,7 +126,8 @@ def approve_handler(message):
 
     with open(full_path, 'rb') as f:
         file_content = f.read()
-        word.file.save(sanitized_theme, ContentFile(file_content))
+        # word.file.save(sanitized_theme, ContentFile(file_content))
+        word.file.name = full_path
         word.status = word.StatusChoices.APPROVED
         word.save()
 
