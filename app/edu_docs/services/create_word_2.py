@@ -32,13 +32,24 @@ def save_doc_in_media(doc, sanitized_theme):
         # Создание всех необходимых директорий
         os.makedirs(os.path.dirname(full_path), exist_ok=True)
 
-        namespace = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
-        element_updatefields = lxml.etree.SubElement(
-            doc.settings.element, f"{namespace}updateFields"
-        )
-        element_updatefields.set(f"{namespace}val", "true")
-
         doc.save(full_path)
+
+        with open(full_path, 'rb') as f:
+            # Создаем объект Document
+            doc = Document(full_path)
+
+            # Получаем доступ к настройкам документа
+            doc_settings = doc.settings.element
+
+            # Определяем namespace
+            namespace = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+            # Добавляем элемент updateFields
+            element_updatefields = etree.SubElement(doc_settings, f"{namespace}updateFields")
+            element_updatefields.set(f"{namespace}val", "true")
+
+            # Сохраняем изменения обратно в файл
+            doc.save(full_path)
 
         return full_path, sanitized_theme  # Возвращаем относительный путь
 
