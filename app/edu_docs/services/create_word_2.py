@@ -5,6 +5,7 @@ import lxml
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.core.files import File
 
 from docx import Document
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_ALIGN_PARAGRAPH, WD_BREAK
@@ -20,7 +21,7 @@ def get_dated_path(filename):
     return os.path.join('documents', today.strftime('%Y'), today.strftime('%m'), today.strftime('%d'), filename)
 
 
-def save_doc_in_media(doc, sanitized_theme):
+def save_doc_in_media(doc, sanitized_theme, word):
     try:
         sanitized_theme = f'{sanitized_theme}.docx'
         # Создание пути с текущей датой
@@ -37,7 +38,10 @@ def save_doc_in_media(doc, sanitized_theme):
         element_updatefields.set(f"{namespace}val", "true")
 
         doc.save(full_path)
-        return full_path, sanitized_theme  # Возвращаем относительный путь
+
+        with open(full_path) as f:
+            word.file.save(sanitized_theme, File(f))
+            word.save()
 
     except OSError as e:
         # Обработка ошибок создания директории или сохранения файла
@@ -67,7 +71,7 @@ def sanitize_filename(filename):
     return sanitized_filename
 
 
-def create_word(work_theme, subtopics, texts, university, work_type, author_name, group_name, teacher_name, language_of_work, cover_page_data):
+def create_word(word, work_theme, subtopics, texts, university, work_type, author_name, group_name, teacher_name, language_of_work, cover_page_data):
     """
         Функция createword оформляет и сохраняет Word документ по стандарту.
 
@@ -381,7 +385,7 @@ def create_word(work_theme, subtopics, texts, university, work_type, author_name
         # Добавляем номера страниц
         add_page_number(doc.sections[1])
 
-        return save_doc_in_media(doc, sanitized_theme)
+        return save_doc_in_media(doc, sanitized_theme, word)
 
 
     # Если язык работы русский
@@ -674,7 +678,7 @@ def create_word(work_theme, subtopics, texts, university, work_type, author_name
         # Добавляем номера страниц
         add_page_number(doc.sections[1])
 
-        return save_doc_in_media(doc, sanitized_theme)
+        return save_doc_in_media(doc, sanitized_theme, word)
 
 
     # Если язык работы английский
@@ -966,4 +970,4 @@ def create_word(work_theme, subtopics, texts, university, work_type, author_name
         # Добавляем номера страниц
         add_page_number(doc.sections[1])
 
-        return save_doc_in_media(doc, sanitized_theme)
+        return save_doc_in_media(doc, sanitized_theme, word)

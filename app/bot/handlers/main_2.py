@@ -108,7 +108,8 @@ def approve_handler(message):
         subtopic_texts,
         word.subtopics
     )
-    full_path, sanitized_theme = create_word(
+    create_word(
+        word=word,
         work_theme=word.work_theme,
         subtopics=word.subtopics,
         texts=edited_subtopic_texts,
@@ -121,12 +122,8 @@ def approve_handler(message):
         cover_page_data=word.cover_page_data
     )
 
-    with open(full_path, 'rb') as f:
-        file_content = f.read()
-
-        word.file.name = full_path
-        word.status = word.StatusChoices.APPROVED
-        word.save()
+    word.status = word.StatusChoices.APPROVED
+    word.save()
 
     for admin_chat_id in admin_chat_ids:
         bot.send_message(admin_chat_id, f'Работа пользователя {payment.author.full_name} создан')
