@@ -1,7 +1,7 @@
 import logging
 import time
 
-from django.core.files.base import ContentFile, File
+from django.core.files.base import ContentFile
 from telebot import TeleBot
 from django.conf import settings
 
@@ -121,8 +121,9 @@ def approve_handler(message):
         cover_page_data=word.cover_page_data
     )
 
-    with open(full_path) as f:
-        word.file.save(sanitized_theme, File(f))
+    with open(full_path, 'rb') as f:
+        file_content = f.read()
+        word.file.save(sanitized_theme, ContentFile(file_content))
         word.status = word.StatusChoices.APPROVED
         word.save()
 

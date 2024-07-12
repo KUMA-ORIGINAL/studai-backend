@@ -1,6 +1,6 @@
+import logging
 import os
 import re
-import uuid
 import lxml
 
 from django.conf import settings
@@ -15,12 +15,14 @@ from docx.oxml.ns import qn
 import datetime
 import docx
 
+logger = logging.getLogger(__name__)
+
 def get_dated_path(filename):
     today = datetime.datetime.now()
     return os.path.join('documents', today.strftime('%Y'), today.strftime('%m'), today.strftime('%d'), filename)
 
 
-def save_doc_in_media(doc, sanitized_theme, word):
+def save_doc_in_media(doc, sanitized_theme):
     try:
         sanitized_theme = f'{sanitized_theme}.docx'
         # Создание пути с текущей датой
@@ -68,7 +70,7 @@ def sanitize_filename(filename):
     return sanitized_filename
 
 
-def create_word(word, work_theme, subtopics, texts, university, work_type, author_name, group_name, teacher_name, language_of_work, cover_page_data):
+def create_word(work_theme, subtopics, texts, university, work_type, author_name, group_name, teacher_name, language_of_work, cover_page_data):
     """
         Функция createword оформляет и сохраняет Word документ по стандарту.
 
@@ -382,7 +384,7 @@ def create_word(word, work_theme, subtopics, texts, university, work_type, autho
         # Добавляем номера страниц
         add_page_number(doc.sections[1])
 
-        return save_doc_in_media(doc, sanitized_theme, word)
+        return save_doc_in_media(doc, sanitized_theme)
 
 
     # Если язык работы русский
@@ -675,7 +677,7 @@ def create_word(word, work_theme, subtopics, texts, university, work_type, autho
         # Добавляем номера страниц
         add_page_number(doc.sections[1])
 
-        return save_doc_in_media(doc, sanitized_theme, word)
+        return save_doc_in_media(doc, sanitized_theme)
 
 
     # Если язык работы английский
@@ -967,4 +969,4 @@ def create_word(word, work_theme, subtopics, texts, university, work_type, autho
         # Добавляем номера страниц
         add_page_number(doc.sections[1])
 
-        return save_doc_in_media(doc, sanitized_theme, word)
+        return save_doc_in_media(doc, sanitized_theme)
