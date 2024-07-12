@@ -90,44 +90,38 @@ def approve_handler(message):
 
 
     word = payment.word
-    #
-    # subtopic_texts, context = generate_texts(
-    #     client=client,
-    #     language_of_work=word.language_of_work,
-    #     subtopics=word.subtopics,
-    #     context=word.context,
-    #     page_count=word.page_count
-    # )
-    # edited_subtopic_texts = texts_editor(
-    #     subtopic_texts,
-    #     word.subtopics
-    # )
-    # full_path, sanitized_theme = create_word(
-    #     work_theme=word.work_theme,
-    #     subtopics=word.subtopics,
-    #     texts=edited_subtopic_texts,
-    #     university=word.university,
-    #     work_type=word.work_type_display,
-    #     author_name=word.author_name,
-    #     group_name=word.group_name,
-    #     teacher_name=word.teacher_name,
-    #     language_of_work=word.language_of_work,
-    #     cover_page_data=word.cover_page_data
-    # )
-    #
-    # with open(full_path, 'rb') as f:
-    #     file_content = f.read()
-    #
-    #     # Сохраняем содержимое файла в поле FileField модели
-    #     word.file.save(sanitized_theme, ContentFile(file_content))
-    #     word.status = word.StatusChoices.APPROVED
-    #     word.save()
 
-    file_content = 'fsdsdfs'
-    word.file.save('история франции.docx', ContentFile(file_content))
-    word.status = word.StatusChoices.APPROVED
-    word.save()
+    subtopic_texts, context = generate_texts(
+        client=client,
+        language_of_work=word.language_of_work,
+        subtopics=word.subtopics,
+        context=word.context,
+        page_count=word.page_count
+    )
+    edited_subtopic_texts = texts_editor(
+        subtopic_texts,
+        word.subtopics
+    )
+    full_path, sanitized_theme = create_word(
+        work_theme=word.work_theme,
+        subtopics=word.subtopics,
+        texts=edited_subtopic_texts,
+        university=word.university,
+        work_type=word.work_type_display,
+        author_name=word.author_name,
+        group_name=word.group_name,
+        teacher_name=word.teacher_name,
+        language_of_work=word.language_of_work,
+        cover_page_data=word.cover_page_data
+    )
 
+    with open(full_path, 'rb') as f:
+        file_content = f.read()
+
+        # Сохраняем содержимое файла в поле FileField модели
+        word.file.save(sanitized_theme, ContentFile(file_content))
+        word.status = word.StatusChoices.APPROVED
+        word.save()
 
     bot.send_message(admin_chat_id, f'Работа пользователя {payment.author.full_name} создан')
 
@@ -169,41 +163,6 @@ def reject_handler(message):
     word.save()
 
     bot.send_message(admin_chat_id, f'Платеж пользователя {payment.author.full_name} отклонен.')
-
-
-# # Handler for approving payment
-# @bot.callback_query_handler(func=lambda call: call.data.startswith('approve:'))
-# def approve_payment(call):
-#     logging.info(f'Approve callback received: {call.data}')
-#     payment_id = int(call.data.split(':')[1])
-#     try:
-#         payment = Payment.objects.get(id=payment_id)
-#         payment.status = Payment.StatusChoices.APPROVED
-#         payment.save()
-#         bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=None)
-#         bot.edit_message_text(f'Чек от {payment.author.full_name} для заказа {payment.word.work_theme}\n\nПлатеж подтвержден.', call.message.chat.id, call.message.message_id)
-#     except Payment.DoesNotExist:
-#         bot.send_message(call.message.chat.id, 'Платеж не найден.')
-#
-# # Handler for rejecting payment
-# @bot.callback_query_handler(func=lambda call: call.data.startswith('reject:'))
-# def reject_payment(call):
-#     logging.info(f'Reject callback received: {call.data}')
-#     payment_id = int(call.data.split(':')[1])
-#     try:
-#         payment = Payment.objects.get(id=payment_id)
-#         payment.status = Payment.StatusChoices.REJECTED
-#         payment.save()
-#         bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id, reply_markup=None)
-#         bot.edit_message_text(f'Чек от {payment.author.full_name} для заказа {payment.word.work_theme}\n\nПлатеж отклонен.', call.message.chat.id, call.message.message_id)
-#     except Payment.DoesNotExist:
-#         bot.send_message(call.message.chat.id, 'Платеж не найден.')
-
-
-# Logging updates
-# @bot.message_handler(func=lambda message: True)
-# def echo_all(message):
-#     logger.info(f'Received message: {message.text}')
 
 
 def run_polling():
