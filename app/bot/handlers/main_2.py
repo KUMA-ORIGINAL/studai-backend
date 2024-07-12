@@ -97,6 +97,7 @@ def approve_handler(message):
 
     word = payment.word
 
+    logger.info('generate_texts generate_texts')
     subtopic_texts, context = generate_texts(
         client=client,
         language_of_work=word.language_of_work,
@@ -104,10 +105,12 @@ def approve_handler(message):
         context=word.context,
         page_count=word.page_count
     )
+    logger.info('texts_editor texts_editor')
     edited_subtopic_texts = texts_editor(
         subtopic_texts,
         word.subtopics
     )
+    logger.info('create_word create_word')
     full_path, sanitized_theme = create_word(
         work_theme=word.work_theme,
         subtopics=word.subtopics,
