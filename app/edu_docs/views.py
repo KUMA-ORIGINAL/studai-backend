@@ -139,8 +139,12 @@ class PlanViewSet(viewsets.GenericViewSet):
     list=extend_schema(
         summary='Получить список документов для автора'
     ),
+    destroy=extend_schema(
+        summary='Удалить документ'
+    )
 )
 class WordViewSet(viewsets.GenericViewSet,
+                  viewsets.mixins.DestroyModelMixin,
                   viewsets.mixins.ListModelMixin):
     permission_classes = (IsAuthorOrReadOnly,)
     serializer_class = WordReadSerializer
@@ -148,4 +152,3 @@ class WordViewSet(viewsets.GenericViewSet,
     def get_queryset(self):
         user = self.request.user
         return Word.objects.filter(author=user)
-
