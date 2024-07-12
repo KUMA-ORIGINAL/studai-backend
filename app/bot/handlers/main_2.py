@@ -1,10 +1,8 @@
 import logging
 import time
 
-from django.core.files import File
 from django.core.files.base import ContentFile
 from telebot import TeleBot
-
 from django.conf import settings
 
 from bot.models import Payment
@@ -21,12 +19,14 @@ telebot_logger.setLevel(logging.DEBUG)
 
 bot = TeleBot(settings.TELEGRAM_TOKEN)
 
-admin_chat_id = int(settings.TG_ADMIN_CHAT_ID)
+# List of admin chat IDs
+admin_chat_ids = [int(chat_id) for chat_id in settings.TG_ADMIN_CHAT_IDS.split(",")]
 
 
 @bot.message_handler(commands=['start'])
 def start_handler(message):
-    bot.send_message(admin_chat_id, 'Привет Админ!')
+    for admin_chat_id in admin_chat_ids:
+        bot.send_message(admin_chat_id, 'Привет Админ!')
 
 
 def send_receipt_to_admin(payment):
@@ -44,50 +44,56 @@ def send_receipt_to_admin(payment):
                        f"Номер заказа: {payment.id}")
             logger.info(f'Caption: {caption}')
 
-            bot.send_photo(admin_chat_id, photo, caption=caption)
-            logger.info(f'Receipt sent to admin with buttons for payment id: {payment.id}')
+            for admin_chat_id in admin_chat_ids:
+                bot.send_photo(admin_chat_id, photo, caption=caption)
+                logger.info(f'Receipt sent to admin with buttons for payment id: {payment.id}')
     except FileNotFoundError:
         logger.error(f'Photo file not found at path: {photo_path}')
     except Exception as e:
         logger.error(f'Error sending receipt: {e}')
 
+
 @bot.message_handler(commands=['approve'])
 def approve_handler(message):
-    if message.chat.id != admin_chat_id:
+    if message.chat.id not in admin_chat_ids:
         return
 
-    # Получение ID пользователя и подтверждение платежа
     command_parts = message.text.split()
     if len(command_parts) != 2:
-        bot.send_message(admin_chat_id, 'Используйте команду в формате: /approve <id>')
+        for admin_chat_id in admin_chat_ids:
+            bot.send_message(admin_chat_id, 'Используйте команду в формате: /approve <id>')
         return
 
     try:
         payment_id = int(command_parts[1])
     except ValueError:
-        bot.send_message(admin_chat_id, 'ID должен быть числом.')
+        for admin_chat_id in admin_chat_ids:
+            bot.send_message(admin_chat_id, 'ID должен быть числом.')
         return
 
     try:
         payment = Payment.objects.get(id=payment_id)
     except Payment.DoesNotExist:
-        bot.send_message(admin_chat_id, 'Платеж не найден.')
+        for admin_chat_id in admin_chat_ids:
+            bot.send_message(admin_chat_id, 'Платеж не найден.')
         return
 
     if payment.status == Payment.StatusChoices.APPROVED:
-        bot.send_message(admin_chat_id, 'Платеж уже подтвержден.')
+        for admin_chat_id in admin_chat_ids:
+            bot.send_message(admin_chat_id, 'Платеж уже подтвержден.')
         return
     elif payment.status == Payment.StatusChoices.REJECTED:
-        bot.send_message(admin_chat_id, 'Платеж уже отклонен.')
+        for admin_chat_id in admin_chat_ids:
+            bot.send_message(admin_chat_id, 'Платеж уже отклонен.')
         return
 
     payment.status = Payment.StatusChoices.APPROVED
     payment.save()
 
-    bot.send_message(admin_chat_id,
-                     f'Платеж пользователя {payment.author.full_name} подтвержден.\n'
-                     f'Началось создание работы ...')
-
+    for admin_chat_id in admin_chat_ids:
+        bot.send_message(admin_chat_id,
+                         f'Платеж пользователя {payment.author.full_name} подтвержден.\n'
+                         f'Началось создание работы ...')
 
     word = payment.word
 
@@ -118,42 +124,46 @@ def approve_handler(message):
     with open(full_path, 'rb') as f:
         file_content = f.read()
 
-        # Сохраняем содержимое файла в поле FileField модели
         word.file.save(sanitized_theme, ContentFile(file_content))
         word.status = word.StatusChoices.APPROVED
         word.save()
 
-    bot.send_message(admin_chat_id, f'Работа пользователя {payment.author.full_name} создан')
+    for admin_chat_id in admin_chat_ids:
+        bot.send_message(admin_chat_id, f'Работа пользователя {payment.author.full_name} создан')
 
-# Обработчик команды /reject
+
 @bot.message_handler(commands=['reject'])
 def reject_handler(message):
-    if message.chat.id != admin_chat_id:
+    if message.chat.id not in admin_chat_ids:
         return
 
-    # Получение ID пользователя и отклонение платежа
     command_parts = message.text.split()
     if len(command_parts) != 2:
-        bot.send_message(admin_chat_id, 'Используйте команду в формате: /reject <id>')
+        for admin_chat_id in admin_chat_ids:
+            bot.send_message(admin_chat_id, 'Используйте команду в формате: /reject <id>')
         return
 
     try:
         payment_id = int(command_parts[1])
     except ValueError:
-        bot.send_message(admin_chat_id, 'ID должен быть числом.')
+        for admin_chat_id in admin_chat_ids:
+            bot.send_message(admin_chat_id, 'ID должен быть числом.')
         return
 
     try:
         payment = Payment.objects.get(id=payment_id)
     except Payment.DoesNotExist:
-        bot.send_message(admin_chat_id, 'Платеж не найден.')
+        for admin_chat_id in admin_chat_ids:
+            bot.send_message(admin_chat_id, 'Платеж не найден.')
         return
 
     if payment.status == Payment.StatusChoices.REJECTED:
-        bot.send_message(admin_chat_id, 'Платеж уже отклонен.')
+        for admin_chat_id in admin_chat_ids:
+            bot.send_message(admin_chat_id, 'Платеж уже отклонен.')
         return
     elif payment.status == Payment.StatusChoices.APPROVED:
-        bot.send_message(admin_chat_id, 'Платеж уже подтвержден.')
+        for admin_chat_id in admin_chat_ids:
+            bot.send_message(admin_chat_id, 'Платеж уже подтвержден.')
         return
 
     word = payment.word
@@ -162,11 +172,12 @@ def reject_handler(message):
     payment.save()
     word.save()
 
-    bot.send_message(admin_chat_id, f'Платеж пользователя {payment.author.full_name} отклонен.')
+    for admin_chat_id in admin_chat_ids:
+        bot.send_message(admin_chat_id, f'Платеж пользователя {payment.author.full_name} отклонен.')
 
 
 def run_polling():
-    logger.info(f'start bot')
+    logger.info('start bot')
     while True:
         try:
             bot.polling(non_stop=True, interval=0)
