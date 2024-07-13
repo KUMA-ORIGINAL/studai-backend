@@ -105,6 +105,7 @@ def approve_handler(message):
         context=word.context,
         page_count=word.page_count
     )
+    print(subtopic_texts)
     logger.info('texts_editor texts_editor')
     edited_subtopic_texts = texts_editor(
         subtopic_texts,
@@ -126,8 +127,8 @@ def approve_handler(message):
 
     with open(full_path, 'rb') as f:
         file_content = f.read()
-        # word.file.save(sanitized_theme, ContentFile(file_content))
-        word.file.name = full_path
+        word.file.save(sanitized_theme, ContentFile(file_content))
+        # word.file.name = full_path
         word.status = word.StatusChoices.APPROVED
         word.save()
 

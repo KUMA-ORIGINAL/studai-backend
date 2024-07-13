@@ -8,7 +8,7 @@ services:
     env_file:
       - .env.prod
     container_name: backend
-    restart: unless-stopped
+    restart: always
     command: gunicorn --preload app.wsgi -b 0.0.0.0:8000 --timeout 120 --log-level debug
     expose:
       - 8000
@@ -22,10 +22,11 @@ services:
   bot:
     build:
       context: app
+      dockerfile: Dockerfile.prod
     env_file:
       - .env.prod
     container_name: tg_bot
-    restart: unless-stopped
+    restart: always
     command: python run_polling.py
     volumes:
       - ./app:/app/application
