@@ -35,6 +35,7 @@ ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS").split(" ")
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_HEADERS = ["Authorization", "Content-Type", "Accept"]
 
 if DEBUG:
     SECURE_SSL_REDIRECT = False
@@ -234,7 +235,8 @@ DJOSER = {
     'TOKEN_MODEL': None,
     'USER_ID_FIELD': 'username',
     "SOCIAL_AUTH_TOKEN_STRATEGY": "djoser.social.token.jwt.TokenStrategy",
-    "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": ["http://localhost:3000"],
+    "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": ["http://localhost:3000",
+                                          'http://127.0.0.1:3000'],
     'SERIALIZERS': {
         'user_create': 'account.serializers.UserCreateSerializer',
         'user': 'account.serializers.UserSerializer',
