@@ -43,7 +43,7 @@ class PlanViewSet(viewsets.GenericViewSet):
             work_theme = data['work_theme']
             discipline = data['discipline']
             page_count = data['page_count']
-            wishes = data['wishes']
+            wishes = data.get('wishes', '')
 
             cover_page_data = data['cover_page_data']
 
