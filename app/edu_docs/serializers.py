@@ -34,4 +34,5 @@ class WordReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Word
         fields = ['id', 'work_theme', 'page_count_display',
-                  'work_type_display', 'language_of_work_display', 'status', 'file']
+                  'work_type_display', 'language_of_work_display',
+                  'status', 'subtopics', 'file']
