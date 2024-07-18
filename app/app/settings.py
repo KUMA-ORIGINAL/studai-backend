@@ -178,6 +178,7 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
+SITE_NAME = 'studai.online'
 DOMAIN = 'studai-2024.vercel.app'
 
 TELEGRAM_TOKEN = env("TELEGRAM_TOKEN")
@@ -286,6 +287,11 @@ LOGGING = {
             'propagate': False,
         },
         'telebot': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # Ensure telebot logs are captured
+            'propagate': True,
+        },
+        'create_word': {
             'handlers': ['console'],
             'level': 'DEBUG',  # Ensure telebot logs are captured
             'propagate': True,
