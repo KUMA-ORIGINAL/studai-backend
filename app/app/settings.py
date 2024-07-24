@@ -178,8 +178,8 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
-SITE_NAME = 'studai.online'
-DOMAIN = 'studai-2024.vercel.app'
+SITE_NAME = 'studai.app'
+DOMAIN = 'studai.app'
 
 TELEGRAM_TOKEN = env("TELEGRAM_TOKEN")
 TG_ADMIN_CHAT_IDS = env('TG_ADMIN_CHAT_IDS')
