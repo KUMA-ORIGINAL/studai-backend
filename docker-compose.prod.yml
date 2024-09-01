@@ -9,7 +9,7 @@ services:
       - .env.prod
     container_name: backend
     restart: always
-    command: gunicorn --preload app.wsgi -b 0.0.0.0:8000 --timeout 120 --log-level debug
+    command: gunicorn app.wsgi:application --workers 3 --bind 0.0.0.0:8000 --timeout 120 --access-logfile /var/log/gunicorn/access.log --error-logfile /var/log/gunicorn/error.log --log-level info
     expose:
       - 8000
     volumes:
